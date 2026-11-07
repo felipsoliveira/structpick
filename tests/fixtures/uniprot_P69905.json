@@ -1,0 +1,74 @@
+{
+ "primaryAccession": "P69905",
+ "organism": {
+  "scientificName": "Homo sapiens",
+  "commonName": "Human",
+  "taxonId": 9606,
+  "lineage": [
+   "Eukaryota",
+   "Metazoa",
+   "Chordata",
+   "Craniata",
+   "Vertebrata",
+   "Euteleostomi",
+   "Mammalia",
+   "Eutheria",
+   "Euarchontoglires",
+   "Primates",
+   "Haplorrhini",
+   "Catarrhini",
+   "Hominidae",
+   "Homo"
+  ]
+ },
+ "proteinDescription": {
+  "recommendedName": {
+   "fullName": {
+    "value": "Hemoglobin subunit alpha"
+   }
+  },
+  "alternativeNames": [
+   {
+    "fullName": {
+     "value": "Alpha-globin"
+    }
+   },
+   {
+    "fullName": {
+     "value": "Hemoglobin alpha chain"
+    }
+   }
+  ],
+  "contains": [
+   {
+    "recommendedName": {
+     "fullName": {
+      "evidences": [
+       {
+        "evidenceCode": "ECO:0000303",
+        "source": "PubMed",
+        "id": "18077343"
+       }
+      ],
+      "value": "Hemopressin"
+     }
+    }
+   }
+  ]
+ },
+ "genes": [
+  {
+   "geneName": {
+    "value": "HBA1"
+   }
+  },
+  {
+   "geneName": {
+    "value": "HBA2"
+   }
+  }
+ ],
+ "sequence": {
+  "length": 142
+ }
+}

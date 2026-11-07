@@ -1,0 +1,28 @@
+{
+ "2dn2": [
+  {
+   "chain_id": "A",
+   "chem_comp_id": "HEM",
+   "chem_comp_name": "PROTOPORPHYRIN IX CONTAINING FE",
+   "weight": 616.487
+  },
+  {
+   "chain_id": "B",
+   "chem_comp_id": "HEM",
+   "chem_comp_name": "PROTOPORPHYRIN IX CONTAINING FE",
+   "weight": 616.487
+  },
+  {
+   "chain_id": "C",
+   "chem_comp_id": "HEM",
+   "chem_comp_name": "PROTOPORPHYRIN IX CONTAINING FE",
+   "weight": 616.487
+  },
+  {
+   "chain_id": "D",
+   "chem_comp_id": "HEM",
+   "chem_comp_name": "PROTOPORPHYRIN IX CONTAINING FE",
+   "weight": 616.487
+  }
+ ]
+}

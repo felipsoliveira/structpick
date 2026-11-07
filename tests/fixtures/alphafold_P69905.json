@@ -1,0 +1,15 @@
+[
+ {
+  "uniprotAccession": "P69905",
+  "latestVersion": 6,
+  "globalMetricValue": 98.06,
+  "fractionPlddtVeryHigh": 0.993,
+  "sequenceStart": 1,
+  "sequenceEnd": 142,
+  "cifUrl": "https://alphafold.ebi.ac.uk/files/AF-P69905-F1-model_v6.cif",
+  "pdbUrl": "https://alphafold.ebi.ac.uk/files/AF-P69905-F1-model_v6.pdb",
+  "organismScientificName": "Homo sapiens",
+  "gene": "HBA1",
+  "uniprotDescription": "Hemoglobin subunit alpha"
+ }
+]
