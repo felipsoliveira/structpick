@@ -8,6 +8,12 @@ Pick a protein structure to dock against.
 
 Given a UniProt accession, `structpick` combines target metadata with experimental structures from PDB/PDBe, ranks them by sequence coverage and resolution, and checks which structures have a non-additive ligand bound on the target chain. If no experimental structure matches the filters, AlphaFold is available as a fallback. It turns the first step of structure-based drug design from manually checking many PDB pages into one reproducible command.
 
+## Why I built it
+
+In my biomolecular physics research, structure-based drug design starts with picking a protein structure that is useful for docking. For a target with many PDB entries, comparing sequence coverage, resolution, and bound ligands by hand gets repetitive. I built `structpick` to make that first pass repeatable from a UniProt accession.
+
+It does not run docking or predict a binder. It narrows the structure search and shows the information behind the choice. I also wanted a public Python project connected to the kind of research I do.
+
 ![How structpick finds a docking structure](https://raw.githubusercontent.com/felipsoliveira/structpick/main/docs/structpick-overview.svg)
 
 ```console
