@@ -1,8 +1,10 @@
 import csv
 import io
 import json
+from importlib.metadata import version
 
 import httpx
+import pytest
 
 from structpick.cli import main
 from tests.conftest import fixture_handler
@@ -12,6 +14,14 @@ def run(client, *argv):
     out = io.StringIO()
     code = main(list(argv), client=client, out=out)
     return code, out.getvalue()
+
+
+def test_cli_reports_installed_package_version(capsys):
+    with pytest.raises(SystemExit) as exit_info:
+        main(["--version"])
+
+    assert exit_info.value.code == 0
+    assert capsys.readouterr().out.strip() == f"structpick {version('structpick')}"
 
 
 def test_list_table(client):

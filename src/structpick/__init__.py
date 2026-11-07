@@ -12,4 +12,4 @@ __all__ = [
     "is_additive",
     "select_structures",
 ]
-__version__ = "0.1.0"
+__version__ = "0.1.2"
