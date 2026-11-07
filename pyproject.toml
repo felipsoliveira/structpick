@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "structpick"
-version = "0.1.0"
+version = "0.1.1"
 description = "Pick the best protein structure for docking: ranks PDB entries for a UniProt target, flags bound ligands and falls back to AlphaFold."
 readme = "README.md"
 license = "MIT"

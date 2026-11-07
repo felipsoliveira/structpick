@@ -34,7 +34,7 @@ def test_no_structures_is_empty(client):
     assert client.structures("Q00000") == []
 
 
-def test_ligands_are_fetched_once_per_entry(make_client):
+def test_ligands_are_batched_once_per_unique_entry(make_client):
     from tests.conftest import fixture_handler
 
     calls = []
@@ -46,8 +46,24 @@ def test_ligands_are_fetched_once_per_entry(make_client):
     client = make_client(counting)
     structures = client.with_ligands(client.structures("P69905"))
     ligand_calls = [c for c in calls if "ligand_monomers" in c]
-    assert len(ligand_calls) == 3  # 1bab, 2dn2, 2hhb, each with two chains
+    assert len(ligand_calls) == 1
+    assert ligand_calls[0].endswith("/1bab,2dn2,2hhb")
     assert {lig.code for lig in structures[0].bound_ligands} == {"HEM"}
+
+
+def test_ligand_batches_limit_url_length(make_client):
+    calls = []
+
+    def handler(request):
+        entry_ids = request.url.path.rsplit("/", 1)[1].split(",")
+        calls.append(entry_ids)
+        return httpx.Response(200, json={entry_id: [] for entry_id in entry_ids})
+
+    client = make_client(handler)
+    entry_ids = [f"{i:04x}" for i in range(501)]
+
+    assert len(client.ligands_many(entry_ids)) == 501
+    assert [len(batch) for batch in calls] == [500, 1]
 
 
 def test_alphafold(client):

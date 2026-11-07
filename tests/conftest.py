@@ -30,7 +30,19 @@ def fixture_handler(request: httpx.Request) -> httpx.Response:
     if path in ROUTES:
         return httpx.Response(200, json=load(ROUTES[path]))
     if path.startswith("/pdbe/api/pdb/entry/ligand_monomers/"):
-        return httpx.Response(200, json={path.rsplit("/", 1)[1]: []})
+        entry_ids = path.rsplit("/", 1)[1].lower().split(",")
+        if len(entry_ids) > 1:
+            data: dict[str, object] = {}
+            for entry_id in entry_ids:
+                route = f"/pdbe/api/pdb/entry/ligand_monomers/{entry_id}"
+                if route in ROUTES:
+                    payload = load(ROUTES[route])
+                    if isinstance(payload, dict):
+                        data.update(payload)
+                else:
+                    data[entry_id] = []
+            return httpx.Response(200, json=data)
+        return httpx.Response(200, json={entry_ids[0]: []})
     if path.startswith("/download/") or path.startswith("/files/"):
         return httpx.Response(200, content=b"data_" + path.rsplit("/", 1)[1].encode())
     return httpx.Response(404)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+from collections.abc import Iterable
 from dataclasses import replace
 from typing import Any
 
@@ -14,6 +15,7 @@ ALPHAFOLD = "https://alphafold.ebi.ac.uk/api"
 UNIPROT = "https://rest.uniprot.org"
 
 RETRY_STATUS = {429, 500, 502, 503, 504}
+MAX_LIGAND_BATCH_SIZE = 500
 
 
 class TargetNotFoundError(LookupError):
@@ -115,26 +117,38 @@ class Client:
             for row in rows
         ]
 
-    def ligands(self, pdb_id: str) -> tuple[Ligand, ...]:
-        data = self._get(f"{PDBE}/pdb/entry/ligand_monomers/{pdb_id}")
-        if not data:
-            return ()
-        return tuple(
-            Ligand(
-                code=row["chem_comp_id"], name=row.get("chem_comp_name", ""), chain=row["chain_id"]
+    def ligands_many(self, pdb_ids: Iterable[str]) -> dict[str, tuple[Ligand, ...]]:
+        """Fetch ligand metadata for multiple PDB entries in bounded batches."""
+        entry_ids = list(dict.fromkeys(pdb_id.lower() for pdb_id in pdb_ids))
+        if not entry_ids:
+            return {}
+        result: dict[str, tuple[Ligand, ...]] = {}
+        for offset in range(0, len(entry_ids), MAX_LIGAND_BATCH_SIZE):
+            batch = entry_ids[offset : offset + MAX_LIGAND_BATCH_SIZE]
+            data = self._get(f"{PDBE}/pdb/entry/ligand_monomers/{','.join(batch)}") or {}
+            result.update(
+                {
+                    entry_id: tuple(
+                        Ligand(
+                            code=row["chem_comp_id"],
+                            name=row.get("chem_comp_name", ""),
+                            chain=row["chain_id"],
+                        )
+                        for row in data.get(entry_id, data.get(entry_id.upper(), []))
+                    )
+                    for entry_id in batch
+                }
             )
-            for row in data.get(pdb_id, [])
-        )
+        return result
+
+    def ligands(self, pdb_id: str) -> tuple[Ligand, ...]:
+        """Fetch ligand metadata for a single PDB entry."""
+        return self.ligands_many((pdb_id,)).get(pdb_id.lower(), ())
 
     def with_ligands(self, structures: list[Structure]) -> list[Structure]:
-        """Attach ligands, fetching each PDB entry once."""
-        cache: dict[str, tuple[Ligand, ...]] = {}
-        result = []
-        for structure in structures:
-            if structure.pdb_id not in cache:
-                cache[structure.pdb_id] = self.ligands(structure.pdb_id)
-            result.append(replace(structure, ligands=cache[structure.pdb_id]))
-        return result
+        """Attach ligand metadata, batching unique PDB entries into bounded requests."""
+        ligands_by_entry = self.ligands_many(s.pdb_id for s in structures)
+        return [replace(s, ligands=ligands_by_entry.get(s.pdb_id.lower(), ())) for s in structures]
 
     def alphafold(self, accession: str) -> AlphaFoldModel | None:
         data = self._get(f"{ALPHAFOLD}/prediction/{accession}")

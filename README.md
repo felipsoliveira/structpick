@@ -6,7 +6,9 @@
 
 Pick a protein structure to dock against.
 
-Given a UniProt accession, `structpick` lists the experimental structures from the PDB ranked by sequence coverage and resolution, shows which ones have a real ligand bound (ignoring glycerol, sulfate, ions and other crystallisation leftovers) and reports the AlphaFold model as a fallback. It's the first step of most structure-based drug design projects, and usually it means clicking through a dozen PDB pages.
+Given a UniProt accession, `structpick` combines target metadata with experimental structures from PDB/PDBe, ranks them by sequence coverage and resolution, and checks which structures have a non-additive ligand bound on the target chain. If no experimental structure matches the filters, AlphaFold is available as a fallback. It turns the first step of structure-based drug design from manually checking many PDB pages into one reproducible command.
+
+![How structpick finds a docking structure](https://raw.githubusercontent.com/felipsoliveira/structpick/main/docs/structpick-overview.svg)
 
 ```console
 $ structpick list Q27743 --holo --max-resolution 2.0 --top 5
@@ -89,7 +91,7 @@ Ligands only count if they sit on the same chain and aren't in the [additive lis
 - [PDBe ligand monomers](https://www.ebi.ac.uk/pdbe/api/doc/pdb.html) for bound ligands
 - [AlphaFold Protein Structure Database](https://alphafold.ebi.ac.uk/api-docs) for predicted models
 
-Requests time out after 30 s and are retried with exponential backoff on 429 and 5xx responses. Ligands are only looked up for the chains left after the other filters, one request per PDB entry.
+Requests time out after 30 s and are retried with exponential backoff on 429 and 5xx responses. Ligand metadata is fetched only after the other filters, for unique PDB entries in batches of up to 500 IDs per request; this replaces one serial ligand-lookup request per entry.
 
 ## Development
 
